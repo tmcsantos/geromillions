@@ -1,7 +1,7 @@
 /**
  * 
  */
-package miscellaneos.solids
+package miscellaneous.solids
 
 /**
  * @author helik

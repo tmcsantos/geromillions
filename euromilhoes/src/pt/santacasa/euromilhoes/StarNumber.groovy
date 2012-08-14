@@ -12,6 +12,7 @@ class StarNumber extends Ball {
 	
 	StarNumber(){
 		super()
+		this.radius = 0.025
 	}
 	
 	String toString() {

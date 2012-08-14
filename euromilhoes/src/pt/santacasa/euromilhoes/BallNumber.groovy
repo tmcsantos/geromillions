@@ -12,6 +12,7 @@ class BallNumber extends Ball {
 	
 	BallNumber(){
 		super()
+		this.radius = 0.025
 	}
 	
 	String toString() {
