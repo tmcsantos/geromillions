@@ -46,16 +46,16 @@ class Extractor {
 		}
 	}
 	
-	def randomKey() {
+	def randomKey(def numbers = 5,def stars = 2) {
 		Key key = new Key()
 		Random rand = new Random()
 		
 		def generate = {
-			(0..4).collect {
-				key.addNumber numbers.remove (rand.nextInt(config.euromilhoes.numbers.last()-it))
+			(0..numbers-1).collect {
+				key.addNumber this.numbers.remove (rand.nextInt(config.euromilhoes.numbers.last()-it))
 			}
-			(0..1).collect {
-				key.addStar stars.remove (rand.nextInt(config.euromilhoes.stars.last()-it))
+			(0..stars-1).collect {
+				key.addStar this.stars.remove (rand.nextInt(config.euromilhoes.stars.last()-it))
 			}
 		}
 		generate()
