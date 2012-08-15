@@ -1,8 +1,6 @@
-import pt.santacasa.euromilhoes.Generator
+import miscellaneous.Environment
+import pt.santacasa.euromilhoes.Extractor
 
-g = new Generator()
-println g.newKey()
-k = g.key.numbers.first()
-println "V: ${k.getVolume()}" 
-println "M: ${k.getMass()}" 
-println "W: ${k.getWeight()}"
+g = new Extractor()
+println "Random key: ${g.randomKey()}"
+env = g.getEnvironment()

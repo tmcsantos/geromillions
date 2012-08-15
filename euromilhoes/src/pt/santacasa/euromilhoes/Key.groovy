@@ -20,6 +20,6 @@ class Key {
 	}
 	
 	String toString() {
-		"${numbers.join(',')} +${stars.join(' +')}"
+		"${numbers.join(' ')} + ${stars.join(' ')}"
 	}
 }
