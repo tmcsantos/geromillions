@@ -9,13 +9,17 @@ package pt.santacasa.euromilhoes
  */
 class BallNumber extends Ball {
 	Integer number
+	double heat
 	
 	BallNumber(){
 		super()
-		this.radius = 0.025
+	}
+	
+	def getWeight(){
+		super.getWeight() - super.getLift(heat)
 	}
 	
 	String toString() {
-		"$number"
+		"${number}"
 	}
 }

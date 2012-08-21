@@ -9,10 +9,10 @@ package pt.santacasa.euromilhoes
  */
 class StarNumber extends Ball {
 	Integer number
+	double heat
 	
 	StarNumber(){
 		super()
-		this.radius = 0.025
 	}
 	
 	String toString() {

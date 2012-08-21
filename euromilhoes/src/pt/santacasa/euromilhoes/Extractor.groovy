@@ -7,55 +7,129 @@ import miscellaneous.Environment
 import miscellaneous.Humidity
 import miscellaneous.Temperature
 
+@Category(Integer)
+class Polynomial{
+	def polynomial(index=0) { ((this-5.5)**2) / 1000 + index}
+	def inv_polynomial(index=0) { (-(this-5.5)**2 + 35) / 1000 + index}
+}
+
 /**
  * @author helik
  *
  */
 class Extractor {
 	def config
-	def numbers
-	def stars
-	def environment
+	def numbers = []
+	def stars = []
+	Environment environment
 	
 	Extractor(){
 		config = new ConfigSlurper().parse(new File('config/Config.groovy').toURI().toURL())
 		environment = new Environment()
-		setNumbers()
-		setStars()
+		initNumbers()
+		initStars()
 	}
 	
-	def setNumbers() {
+	def setTemperature(Temperature temp){
+		environment.setTemperature(temp)
+		initNumbers()
+		initStars()
+	}
+	
+	def initNumbers() {
 		numbers = config.euromilhoes.numbers.collect {
 			new BallNumber(
 				number: it,
 				env: getEnvironment(),
 				radius: this.config.euromilhoes.ball.radius,
-				density: this.config.euromilhoes.ball.density
+				density: this.config.euromilhoes.ball.density,
+				heat: getEnvironment()?.getTemperature()?.getTemperature()?:0.0
 				)
 		}
 	}
 	
-	def setStars() {
+	def initStars() {
 		stars = config.euromilhoes.stars.collect {
 			new StarNumber(
 				number: it,
 				env: getEnvironment(),
 				radius: config.euromilhoes.ball.radius,
-				density: config.euromilhoes.ball.density
+				density: config.euromilhoes.ball.density,
+				heat: getEnvironment()?.getTemperature()?.getTemperature()?:0.0
 				)
 		}
+	}
+	
+	def extraction(def numbers = 5, def stars = 2, Calendar date = Calendar.instance){
+		Key key = new Key()
+		def __numbers = this.numbers.clone()
+		def __stars = this.stars.clone()
+		def _numbers = this.numbers.collate(10)
+		def _stars = this.stars.reverse().collate(6).reverse()
+		Random rand = new Random(date.getTimeInMillis())
+		use(Polynomial){
+			def vector = (0..4)*.inv_polynomial(rand.nextDouble())
+			def matrix = [
+				(1..10)*.polynomial(rand.nextDouble()),
+				(1..10)*.polynomial(rand.nextDouble()),
+				(1..10)*.polynomial(rand.nextDouble()),
+				(1..10)*.polynomial(rand.nextDouble()),
+				(1..10)*.polynomial(rand.nextDouble())
+				].transpose().collect {
+					def z = []
+					it.eachWithIndex { v,i -> z << v.multiply(vector[i]) }
+					z
+				}.transpose()
+			matrix.eachWithIndex {_l,l->
+				_l.eachWithIndex {_c,c->
+					def temp = environment.getTemperature().getTemperature()
+					_numbers[l][c].setHeat(temp + _c)
+				}
+			}
+		}
+		__numbers.sort { a,b -> b.getWeight() <=> a.getWeight() }
+		(0..numbers-1).collect {
+			rand.setSeed(date.getTimeInMillis() + rand.nextInt(8) + rand.nextInt(15))
+			key.addNumber __numbers.remove (rand.nextInt(config.euromilhoes.numbers.last()-it))
+		}
+		
+		use(Polynomial){
+			def vector = (0..5)*.polynomial(rand.nextDouble())
+			def matrix = [
+				(1..5)*.inv_polynomial(rand.nextDouble()),
+				(1..6)*.inv_polynomial(rand.nextDouble())
+				].transpose().collect {
+					def z = []
+					it.eachWithIndex { v,i -> z << v.multiply(vector[i]) }
+					z
+				}.transpose()
+			matrix.eachWithIndex {_l,l->
+				_l.eachWithIndex {_c,c->
+					def temp = environment.getTemperature().getTemperature()
+					_stars[l][c].setHeat(temp + _c)
+				}
+			}
+		}
+		__stars.sort { a,b -> b.getWeight() <=> a.getWeight() }
+		(0..stars-1).collect {
+			rand.setSeed(date.getTimeInMillis() + rand.nextInt(8) + rand.nextInt(15))
+			key.addStar __stars.remove (rand.nextInt(config.euromilhoes.stars.last()-it))
+		}
+		key
 	}
 	
 	def randomKey(def numbers = 5,def stars = 2) {
 		Key key = new Key()
 		Random rand = new Random()
+		def _numbers = this.numbers.clone()
+		def _stars = this.stars.clone()
 		
 		def generate = {
 			(0..numbers-1).collect {
-				key.addNumber this.numbers.remove (rand.nextInt(config.euromilhoes.numbers.last()-it))
+				key.addNumber _numbers.remove (rand.nextInt(config.euromilhoes.numbers.last()-it))
 			}
 			(0..stars-1).collect {
-				key.addStar this.stars.remove (rand.nextInt(config.euromilhoes.stars.last()-it))
+				key.addStar _stars.remove (rand.nextInt(config.euromilhoes.stars.last()-it))
 			}
 		}
 		generate()
