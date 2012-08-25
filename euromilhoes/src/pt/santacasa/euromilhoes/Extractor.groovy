@@ -3,6 +3,8 @@
  */
 package pt.santacasa.euromilhoes
 
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 import miscellaneous.Environment
 import miscellaneous.Humidity
 import miscellaneous.Temperature
@@ -22,6 +24,7 @@ class Extractor {
 	def numbers = []
 	def stars = []
 	Environment environment
+	private final static Log log = LogFactory.getLog(Extractor.class)
 	
 	Extractor(){
 		config = new ConfigSlurper().parse(new File('config/Config.groovy').toURI().toURL())
@@ -69,12 +72,17 @@ class Extractor {
 		Random rand = new Random(date.getTimeInMillis())
 		use(Polynomial){
 			def vector = (0..4)*.inv_polynomial(rand.nextDouble())
+			def prevheat = 0
+			def heatvector = { ->
+				prevheat += rand.nextDouble() * 0.015
+				prevheat
+			}
 			def matrix = [
-				(1..10)*.polynomial(rand.nextDouble()),
-				(1..10)*.polynomial(rand.nextDouble()),
-				(1..10)*.polynomial(rand.nextDouble()),
-				(1..10)*.polynomial(rand.nextDouble()),
-				(1..10)*.polynomial(rand.nextDouble())
+				(1..10)*.polynomial(heatvector()),
+				(1..10)*.polynomial(heatvector()),
+				(1..10)*.polynomial(heatvector()),
+				(1..10)*.polynomial(heatvector()),
+				(1..10)*.polynomial(heatvector())
 				].transpose().collect {
 					def z = []
 					it.eachWithIndex { v,i -> z << v.multiply(vector[i]) }
@@ -95,9 +103,14 @@ class Extractor {
 		
 		use(Polynomial){
 			def vector = (0..5)*.polynomial(rand.nextDouble())
+			def prevheat = 0
+			def heatvector = { ->
+				prevheat += rand.nextDouble() * 0.015
+				prevheat
+			}
 			def matrix = [
-				(1..5)*.inv_polynomial(rand.nextDouble()),
-				(1..6)*.inv_polynomial(rand.nextDouble())
+				(1..5)*.inv_polynomial(heatvector()),
+				(1..6)*.inv_polynomial(heatvector())
 				].transpose().collect {
 					def z = []
 					it.eachWithIndex { v,i -> z << v.multiply(vector[i]) }
