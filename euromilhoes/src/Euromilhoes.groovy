@@ -7,7 +7,7 @@ g = new Extractor()
 g.setTemperature(Temperature.SUMMER)
 k = g.randomKey()
 d = Calendar.instance
-d.set(2012,8,28,21,0)
+d.set(2012,9,4,21,0)
 exk = g.extraction(5, 2, d)
 println "Random key: ${k}"
 println "Extraction key: ${exk}"
