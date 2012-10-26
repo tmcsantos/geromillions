@@ -102,15 +102,15 @@ class Extractor {
 		}
 		
 		use(Polynomial){
-			def vector = (0..5)*.polynomial(rand.nextDouble())
+			def vector = (0..5)*.inv_polynomial(rand.nextDouble())
 			def prevheat = 0
 			def heatvector = { ->
-				prevheat += rand.nextDouble() * 0.015
+				prevheat += rand.nextDouble() * 0.0015
 				prevheat
 			}
 			def matrix = [
-				(1..5)*.inv_polynomial(heatvector()),
-				(1..6)*.inv_polynomial(heatvector())
+				(1..5)*.polynomial(heatvector()),
+				(1..6)*.polynomial(heatvector())
 				].transpose().collect {
 					def z = []
 					it.eachWithIndex { v,i -> z << v.multiply(vector[i]) }
