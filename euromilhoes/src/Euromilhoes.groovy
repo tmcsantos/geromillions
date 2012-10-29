@@ -16,7 +16,7 @@ def init(args) {
 	if (!options) return
 	if (options.h) {
 		cli.usage()
-		return
+		return ''
 	}
 	
 	def temperature = Temperature.WINTER
