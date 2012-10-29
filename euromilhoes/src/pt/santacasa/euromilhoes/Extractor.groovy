@@ -29,14 +29,7 @@ class Extractor {
 	private final static Log log = LogFactory.getLog(Extractor.class)
 	
 	Extractor(){
-		config = new ConfigSlurper().parse(Extractor.class.classLoader.getResource("Config.groovy"))
-		try {
-			def customConfig = new ConfigSlurper().parse(new File('config/Config.groovy').toURI().toURL())
-			log.info "Merging with customized configurations"
-			config = config.merge(customConfig)
-		} catch (FileNotFoundException e) {
-			log.warn "\r\n\tUsing default configurations\r\n\tCreate a ./config/Config.groovy file if you want to customize"
-		} 
+		config = EuromilhoesProperties.instance
 		environment = new Environment()
 		initNumbers()
 		initStars()
