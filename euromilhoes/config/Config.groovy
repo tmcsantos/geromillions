@@ -8,4 +8,9 @@ euromilhoes {
 		// density one of RUBBER_GUM, RUBBER_SOFT, RUBBER_HARD
 		density = Densities.RUBBER_GUM
 	}
+	
+	rss {
+		results = "http://www.jogossantacasa.pt/web/SCRss/rssFeedCartRes"
+		prizes = "http://www.jogossantacasa.pt/web/SCRss/rssFeedPremiosPortal"
+	}
 }
