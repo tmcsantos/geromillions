@@ -65,13 +65,8 @@ class Extractor {
 		}
 	}
 	
-	def extraction(def numbers = 5, def stars = 2, Calendar date = Calendar.instance){
-		Key key = new Key()
-		def __numbers = this.numbers.clone()
-		def __stars = this.stars.clone()
+	private def extractNumbers(numbers, Random rand){
 		def _numbers = this.numbers.collate(10)
-		def _stars = this.stars.reverse().collate(6).reverse()
-		Random rand = new Random(date.getTimeInMillis())
 		use(Polynomial){
 			def vector = (0..4)*.inv_polynomial(rand.nextDouble())
 			def prevheat = 0
@@ -97,12 +92,11 @@ class Extractor {
 				}
 			}
 		}
-		__numbers.sort { a,b -> b.getWeight() <=> a.getWeight() }
-		(0..numbers-1).collect {
-			rand.setSeed(date.getTimeInMillis() + rand.nextInt(8) + rand.nextInt(15))
-			key.addNumber __numbers.remove (rand.nextInt(config.euromilhoes.numbers.last()-it))
-		}
-		
+		numbers.sort { a,b -> b.getWeight() <=> a.getWeight() }
+	}
+	
+	private def extractStars(stars, Random rand){
+		def _stars = this.stars.reverse().collate(6).reverse()
 		use(Polynomial){
 			def vector = (0..5)*.inv_polynomial(rand.nextDouble())
 			def prevheat = 0
@@ -125,7 +119,23 @@ class Extractor {
 				}
 			}
 		}
-		__stars.sort { a,b -> b.getWeight() <=> a.getWeight() }
+		stars.sort { a,b -> b.getWeight() <=> a.getWeight() }
+	}
+	
+	def extraction(def numbers = 5, def stars = 2, Calendar date = Calendar.instance){
+		Key key = new Key()
+		def __numbers = this.numbers.clone()
+		def __stars = this.stars.clone()
+		def _numbers = this.numbers.collate(10)
+		def _stars = this.stars.reverse().collate(6).reverse()
+		Random rand = new Random(date.getTimeInMillis())
+		
+		extractNumbers(__numbers, rand)
+		(0..numbers-1).collect {
+			rand.setSeed(date.getTimeInMillis() + rand.nextInt(8) + rand.nextInt(15))
+			key.addNumber __numbers.remove (rand.nextInt(config.euromilhoes.numbers.last()-it))
+		}
+		extractStars(__stars, rand)
 		(0..stars-1).collect {
 			rand.setSeed(date.getTimeInMillis() + rand.nextInt(8) + rand.nextInt(15))
 			key.addStar __stars.remove (rand.nextInt(config.euromilhoes.stars.last()-it))

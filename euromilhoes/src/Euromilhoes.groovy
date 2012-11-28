@@ -37,8 +37,7 @@ def init(args) {
 				parsedDate.getAt(Calendar.MONTH),
 				parsedDate.getAt(Calendar.DATE),
 				20,
-				41,
-				40
+				30
 				)
 	}
 
@@ -55,4 +54,4 @@ println feed.results.channel.item.find {it.title =~ 'Euromilhões' }.description
 println ""
 
 //println init(args)
-println init(['-t','winter','2012/10/30'])
+println init(['-t','winter','2012/11/13'])

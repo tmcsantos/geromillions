@@ -15,6 +15,10 @@ class StarNumber extends Ball {
 		super()
 	}
 	
+	def getWeight(){
+		super.getWeight() - super.getLift(heat)
+	}
+	
 	String toString() {
 		"$number"
 	}
